@@ -88,8 +88,19 @@ namespace CassandraQuickStart
 				return true;
 
             // Console.WriteLine("Swallowed certificate error: {0}", sslPolicyErrors);
-            // We effectively disable certificate verification here. It will not work unless you store and validate against Cassandra MI certificates held locally. 
-            // Certs are signed with Digicert - see https://docs.microsoft.com/azure/active-directory/fundamentals/certificate-authorities.
+
+			// Certs are signed with Digicert - see https://docs.microsoft.com/azure/active-directory/fundamentals/certificate-authorities.
+            // We effectively disable server SSL certificate verification here by returning true regardless of certificate error.
+			// This is because certificate verification will not work unless you map I.P addresses of your cluster nodes to the 
+			// appropriate domain for the Cassandra MI server SSL certificates: CN=*.managedcassandra.cosmos.azure.com
+			// To do this, add entries like the below to your hosts file:
+			// 10.0.1.5 host1.managedcassandra.cosmos.azure.com
+			// 10.0.1.6 host2.managedcassandra.cosmos.azure.com
+			// 10.0.1.7 host3.managedcassandra.cosmos.azure.com
+			// Then add host1, host2, host3 as the contact points instead of IP addresses 
+			// (note that you would need to add new entries whenever scaling up nodes).
+			// finally, change the below return value to false.
+            
             return true;
 		}
 	}
